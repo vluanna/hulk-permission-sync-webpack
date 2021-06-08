@@ -1,0 +1,26 @@
+{
+  "name": "hulk-permission-sync-webpack",
+  "version": "0.1.0",
+  "description": "Webpack plugin that allow you to sync permission in code to api service",
+  "main": "index.js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/vluanna/hulk-permission-sync-webpack"
+  },
+  "keywords": [
+    "webpack",
+    "conditional",
+    "permission sync",
+    "pre build"
+  ],
+  "author": "Luan Nguyen <luan.nguyen.fe@gmail.com>",
+  "contributors": [],
+  "license": "MIT",
+  "scripts": {},
+  "devDependencies": {},
+  "dependencies": {
+    "axios": "^0.21.1",
+    "lodash": "^4.17.21",
+    "webpack": "^4.44.2"
+  }
+}
