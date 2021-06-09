@@ -74,7 +74,7 @@ const parsePermissions = (permissions = {}, allPermissions = {}, childLevelCount
     })
 }
 
-const requestBodyParser = data => data
+const requestBodyParser = (permisionDatas) => ({ permisionDatas })
 
 const isDisabled = (compilerOptions) => {
     return compilerOptions.mode !== 'production'
@@ -95,6 +95,7 @@ module.exports = class HulkPermissionSync {
         requestOptions: {
             url: process.env.PERMISSION_SYNC_URL,
             method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
             bodyParser: requestBodyParser
         },
         isDisabled,
@@ -138,25 +139,30 @@ module.exports = class HulkPermissionSync {
                 const allPermissions = this.options.permissions || {}
                 const usedPermissions = getUsedPermissions(this.matchKeys, allPermissions)
                 const permissions = parsePermissions(usedPermissions, allPermissions, this.options.childLevelCount, this.options.fallbackPermissions)
+                if (this.options.filename) {
+                    try {
+                        fs.writeFileSync(
+                            path.join(outputPath, this.options.filename),
+                            JSON.stringify(permissions)
+                        );
+                    } catch (error) {
+                        console.warn(`${pluginName} Write permmission file ERROR:` + String(error))
+                    }
+                }
                 try {
                     const requestOptions = Object.assign(this.options.requestOptions, {
                         url: this.options.requestOptions.url || process.env.PERMISSION_SYNC_URL,
                         data: (this.options.requestOptions.bodyParser || requestBodyParser)(permissions),
                     })
                     const resp = await axios(requestOptions);
-                    if (resp.data.data) {
-                        console.log('')
+                    const version = get(resp, 'data.responseInfo.version') || 'unknown'
+                    if (get(resp, 'data.data')) {
+                        console.log(`${pluginName} Permissions import success ${permissions.length} records\nVersion ${version}`)
                     } else {
-                        throw new Error("Cannot sync permissions:" + JSON.stringify(resp.data.errors));
+                        throw new Error(`Cannot sync permissions: ${JSON.stringify(get(resp, 'data.errors') || get(resp, 'data'))}\nVersion ${version}`);
                     }
                 } catch (error) {
-                    throw new Error("Cannot sync permissions:" + String(error));
-                }
-                if (this.options.filename) {
-                    fs.writeFileSync(
-                        path.join(outputPath, this.options.filename),
-                        JSON.stringify(permissions)
-                    );
+                    throw new Error(`${pluginName}: ${String(error)}`);
                 }
             }
         })
