@@ -30,7 +30,8 @@ const HulkPermissionSync = require('hulk-permission-sync-webpack');
         requestOptions: {
           url: 'http://some.url/to/post/your/permissions',
           method: 'post',
-          bodyParser: (permissions) => permissions, // parser function to parse permissions to axios data body
+          headers: { 'Content-Type': 'application/json' },
+          bodyParser: (permisionDatas) => ({ permisionDatas }), // parser function to parse permissions to axios data body
         },
         isDisabled: false, // this config will disable the plugin to run on compile
       }),
