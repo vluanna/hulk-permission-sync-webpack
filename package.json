@@ -20,6 +20,7 @@
   "devDependencies": {},
   "dependencies": {
     "axios": "^0.21.1",
+    "fast-glob": "^3.2.7",
     "lodash": "^4.17.21",
     "webpack": "^4.44.2"
   }
