@@ -3,6 +3,7 @@ const fs = require("fs");
 const { get, omitBy, flatten, uniq, take, startCase, toArray } = require('lodash')
 const axios = require("axios");
 const fg = require('fast-glob');
+const normalizePath = require('normalize-path');
 
 const fallbackPermissions = {
     update: 'view',
@@ -118,6 +119,7 @@ module.exports = class HulkPermissionSync {
         let outputPath;
 
         const processFile = (filePath, sourceCode) => {
+
             if (filePath && filePath.startsWith(path.resolve(this.options.sourceFolder))
                 && this.options.fileExtensions.some(item => filePath.endsWith(`.${item}`))
             ) {
@@ -133,7 +135,8 @@ module.exports = class HulkPermissionSync {
         if (isIncludeHtml) {
             compiler.hooks.beforeCompile.tapAsync(pluginName, async (params, callback) => {
                 try {
-                    const entries = await fg([path.resolve(path.join(this.options.sourceFolder, '**/*.html'))]);
+                    const entriesPath = normalizePath(path.resolve(path.join(this.options.sourceFolder, '**/*.html')));
+                    const entries = await fg([entriesPath]);
                     entries.forEach(filePath => {
                         const content = fs.readFileSync(filePath, 'utf8');
                         processFile(filePath, content)
@@ -148,12 +151,9 @@ module.exports = class HulkPermissionSync {
 
         compiler.hooks.compilation.tap(pluginName, (compilation) => {
             outputPath = compilation.outputOptions.path;
-
             const tapCallbackProcess = (normalModule) => {
-                // console.log('=====> process normalModule.resource', this.options.fileExtensions, normalModule.resource, compilation.assets)
                 return processFile(normalModule.resource, get(normalModule, '_source._value') || '')
             }
-
             compilation.hooks.succeedModule.tap(pluginName, tapCallbackProcess);
 
         });
