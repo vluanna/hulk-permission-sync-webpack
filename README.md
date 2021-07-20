@@ -22,7 +22,6 @@ const HulkPermissionSync = require('hulk-permission-sync-webpack');
         filename: "permissions.json", // to create a json file on compile on output folder, optional,
         permissions: {}, // all permission keys object in you app
         fallbackPermissions: { update: "view", create: "view" }, // this will fallback update and create permissions includes view permissions
-        childLevelCount: 3, // menu levels count in permission object
         tests: [/(?<=\hasPermissions\([\w\d]+\.).*?(?=\))/g], // regexes to test content in files with have used permission keys
         fileExtensions: ['js', 'jsx'], // file ext to check on
         sourceFolder: 'src',
