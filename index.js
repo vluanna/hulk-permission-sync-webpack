@@ -38,21 +38,21 @@ const getUsedPermissions = (keys = [], permissions = {}) => {
     })
 }
 
-const parsePermissions = (permissions = {}, allPermissions = {}, childLevelCount = 3, fallbacks = fallbackPermissions) => {
+const parsePermissions = (permissions = {}, allPermissions = {}, fallbacks = fallbackPermissions) => {
     const mappedPermissions = Object.keys(permissions).map(key => ({ key, value: get(permissions, key) }));
-
     return mappedPermissions.map(permission => {
         const key = permission.key || '';
         const permissionKey = get(permission, 'value[0][0]') || '';
         let permissionCode = get(permission, 'value[1]') || [];
         const keyParams = key.split('.');
+        const keyParamsMaxIndex = keyParams.length - 1;
         const pkeyParams = permissionKey.split('.');
         const applicationCode = pkeyParams[0] || '';
-        const businessGroup = take(pkeyParams, childLevelCount).join('.')
-        const menuLevel = childLevelCount - 1;
+        const businessGroup = take(pkeyParams, keyParamsMaxIndex - 1).join('.');
+        const menuLevel = keyParamsMaxIndex - 2;
         const menuName = startCase((keyParams[menuLevel] || '').replace(/_/g, '-').toLowerCase());
-        const screenCodeItem = (keyParams[childLevelCount] || '').replace(/_/g, '-').toLowerCase();
-        const screenCode = take(pkeyParams, childLevelCount).concat([screenCodeItem]).join('.');
+        const screenCodeItem = (keyParams[keyParamsMaxIndex - 1] || '').replace(/_/g, '-').toLowerCase();;
+        const screenCode = take(pkeyParams, keyParamsMaxIndex - 1).concat([screenCodeItem]).join('.');;
 
         Object.keys(fallbacks).forEach(fallItem => {
             const fallbackRegex = new RegExp(`.*.${fallbacks[fallItem]}.${fallItem}`, 'g')
@@ -87,7 +87,6 @@ module.exports = class HulkPermissionSync {
         filename: "permissions.json",
         permissions: {},
         fallbackPermissions,
-        childLevelCount: 3,
         tests: [
             /(?<=\hasPermissions\([\w\d]+\.).*?(?=\))/g,
             /(?<=\usePermissions\([\w\d]+\.).*?(?=\))/g,
@@ -119,9 +118,14 @@ module.exports = class HulkPermissionSync {
         let outputPath;
 
         const processFile = (filePath, sourceCode) => {
+            if (!filePath) {
+                return;
+            }
 
-            if (filePath && filePath.startsWith(path.resolve(this.options.sourceFolder))
-                && this.options.fileExtensions.some(item => filePath.endsWith(`.${item}`))
+            const srcFolderPath = normalizePath(path.resolve(this.options.sourceFolder));
+            const filePathNormalized = normalizePath(filePath);
+            if (filePathNormalized && filePathNormalized.startsWith(srcFolderPath)
+                && this.options.fileExtensions.some(item => filePathNormalized.endsWith(`.${item}`))
             ) {
                 this.options.tests.forEach(regex => {
                     const matchKeys = sourceCode.match(regex)
@@ -151,9 +155,11 @@ module.exports = class HulkPermissionSync {
 
         compiler.hooks.compilation.tap(pluginName, (compilation) => {
             outputPath = compilation.outputOptions.path;
+
             const tapCallbackProcess = (normalModule) => {
-                return processFile(normalModule.resource, get(normalModule, '_source._value') || '')
+                return processFile(normalModule.resource, get(normalModule, '_source._value') || '');
             }
+
             compilation.hooks.succeedModule.tap(pluginName, tapCallbackProcess);
 
         });
@@ -162,7 +168,7 @@ module.exports = class HulkPermissionSync {
             if (this.matchKeys.length) {
                 const allPermissions = this.options.permissions || {}
                 const usedPermissions = getUsedPermissions(this.matchKeys, allPermissions)
-                const permissions = parsePermissions(usedPermissions, allPermissions, this.options.childLevelCount, this.options.fallbackPermissions)
+                const permissions = parsePermissions(usedPermissions, allPermissions, this.options.fallbackPermissions)
                 if (this.options.filename) {
                     try {
                         fs.writeFileSync(
