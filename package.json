@@ -1,11 +1,11 @@
 {
-  "name": "hulk-permission-sync-webpack",
+  "name": "request-permission-sync-webpack",
   "version": "0.1.4",
   "description": "Webpack plugin that allow you to sync permission in code to api service",
   "main": "index.js",
   "repository": {
     "type": "git",
-    "url": "https://github.com/vluanna/hulk-permission-sync-webpack"
+    "url": "https://github.com/vluanna/request-permission-sync-webpack"
   },
   "keywords": [
     "webpack",
