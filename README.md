@@ -6,7 +6,7 @@ Can stop compilation by condition.
 ## Installation
 
 ```
-npm install --save-dev @vluanna/request-permission-sync-webpack
+npm install --save-dev request-permission-sync-webpack
 ```
 
 ## Usage
