@@ -1,4 +1,4 @@
-# hulk-permission-sync-webpack
+# request-permission-sync-webpack
 A webpack plugin to sync permissions to service on deploy
 before build (or after, or any other [event hook](https://webpack.js.org/api/compiler-hooks/)). 
 Can stop compilation by condition.
@@ -6,7 +6,7 @@ Can stop compilation by condition.
 ## Installation
 
 ```
-npm install --save-dev @cloudhms/hulk-permission-sync-webpack
+npm install --save-dev @vluanna/request-permission-sync-webpack
 ```
 
 ## Usage
@@ -14,11 +14,11 @@ npm install --save-dev @cloudhms/hulk-permission-sync-webpack
 In config file:
 
 ``` javascript
-const HulkPermissionSync = require('hulk-permission-sync-webpack');
+const RequestPermissionSync = require('request-permission-sync-webpack');
 // ...
   module: {
     plugins: [
-      new HulkPermissionSync({
+      new RequestPermissionSync({
         filename: "permissions.json", // to create a json file on compile on output folder, optional,
         permissions: {}, // all permission keys object in you app
         fallbackPermissions: { update: "view", create: "view" }, // this will fallback update and create permissions includes view permissions
