@@ -11,7 +11,7 @@ const fallbackPermissions = {
     delete: 'view',
 }
 
-const pluginName = "HulkPermissionSync";
+const pluginName = "RequestPermissionSync";
 
 const flattenObject = (ob) => {
     var toReturn = {};
@@ -82,7 +82,7 @@ const isDisabled = (compilerOptions) => {
     return compilerOptions.mode !== 'production'
 }
 
-module.exports = class HulkPermissionSync {
+module.exports = class RequestPermissionSync {
     static defaultOptions = {
         filename: "permissions.json",
         permissions: {},
@@ -102,7 +102,7 @@ module.exports = class HulkPermissionSync {
         isDisabled,
     };
     constructor(options = {}) {
-        this.options = { ...HulkPermissionSync.defaultOptions, ...options };
+        this.options = { ...RequestPermissionSync.defaultOptions, ...options };
         this.matchKeys = [];
     }
     apply(compiler) {
