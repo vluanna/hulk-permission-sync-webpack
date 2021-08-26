@@ -113,7 +113,9 @@ module.exports = class RequestPermissionSync {
         tests: [
             /(?<=\hasPermissions\([\w\d]+\.).*?(?=\))/g,
             /(?<=\usePermissions\([\w\d]+\.).*?(?=\))/g,
-            /(?<=\withPermissions\([\w\d]+\.).*?(?=\))/g],
+            /(?<=\withPermissions\([\w\d]+\.).*?(?=\))/g,
+            /(?<=\hasPermissions\:[\w\d]+\.).*?(?=[\,])/g
+        ],
         fileExtensions: ['js', 'jsx', 'ts', 'tsx'],
         sourceFolder: 'src',
         requestOptions: {
@@ -128,6 +130,7 @@ module.exports = class RequestPermissionSync {
         this.options = {
             ...RequestPermissionSync.defaultOptions,
             ...options,
+            tests: RequestPermissionSync.defaultOptions.tests.concat(options.tests || []),
             fallbackPermissions: Object.assign(RequestPermissionSync.defaultOptions.fallbackPermissions || {}, options.fallbackPermissions || {})
         };
         this.matchKeys = [];
