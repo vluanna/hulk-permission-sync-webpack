@@ -111,6 +111,7 @@ module.exports = class RequestPermissionSync {
         permissions: {},
         fallbackPermissions,
         tests: [
+            /(?<=\Permission\.).*?(\[0\])/g,
             /(?<=\hasPermissions\([\w\d]+\.).*?(?=\))/g,
             /(?<=\usePermissions\([\w\d]+\.).*?(?=\))/g,
             /(?<=\withPermissions\([\w\d]+\.).*?(?=\))/g,
