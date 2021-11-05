@@ -188,7 +188,7 @@ module.exports = class RequestPermissionSync {
             outputPath = compilation.outputOptions.path;
 
             const tapCallbackProcess = (normalModule) => {
-                return processFile(normalModule.resource, get(normalModule, '_source._value') || '');
+                return processFile(normalModule.resource, get(normalModule, '_source._valueAsString') || get(normalModule, '_source._value') || '');
             }
 
             compilation.hooks.succeedModule.tap(pluginName, tapCallbackProcess);
