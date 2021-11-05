@@ -1,6 +1,6 @@
 {
   "name": "request-permission-sync-webpack",
-  "version": "0.1.8",
+  "version": "0.1.9",
   "description": "Webpack plugin that allow you to sync permission in code to api service",
   "main": "index.js",
   "repository": {
